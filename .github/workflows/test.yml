@@ -1,5 +1,4 @@
 name: 自动化测试流水线
-# 触发时机：推送代码、提交PR时自动运行
 on:
   push:
     branches: [ main ]
@@ -8,29 +7,24 @@ on:
 
 jobs:
   test_task:
-    runs-on: ubuntu-latest # 运行环境：免费Ubuntu云主机
+    runs-on: ubuntu-latest
     steps:
-      # 1.拉取仓库全部代码
       - name: 检出项目代码
         uses: actions/checkout@v4
 
-      # 2.配置Python环境
       - name: 配置Python3.10
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
-          cache: pip # 缓存依赖包，加速后续运行
-
-      # 3.安装自动化测试依赖库
+          # 移除了cache: pip，避免校验依赖文件
+          
       - name: 安装测试依赖
         run: |
           pip install pytest requests pytest-html
 
-      # 4.执行所有测试用例，生成html报告
       - name: 运行自动化用例
         run: pytest tests/ --html=test_report.html
 
-      # 5.无论测试成功失败，都保存报告文件
       - name: 存档测试报告
         if: always()
         uses: actions/upload-artifact@v4
